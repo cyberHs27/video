@@ -1,289 +1,182 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-fullscreen" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-fullscreen"/>
   <title>Selamat Hari Raya Idul Fitri</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-    html, body {
+    html {
       width: 100%;
       height: 100%;
-      height: 100dvh; /* dynamic viewport height - fix Android browser bar */
-      overflow: hidden;
-      background: #000;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
     }
 
-    #video-container {
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #000;
+      touch-action: none;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* ═══ VIDEO ═══ */
+    #mainVideo {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      height: 100dvh;
-      background: #000;
+      object-fit: cover;
+      object-position: center center;
+      display: block;
       z-index: 1;
-      overflow: hidden;
     }
 
-    #mainVideo {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover; /* fill seluruh layar HP tanpa letterbox */
-    }
-
-    /* Tap to Unmute overlay */
-    #unmute-overlay {
+    /* ═══ SPLASH / TAP TO START ═══ */
+    #splash {
       position: fixed;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 200;
+      inset: 0;
+      z-index: 999;
+      background: rgba(0,0,0,0.82);
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 10px;
-      background: rgba(0, 0, 0, 0.65);
-      color: #fff;
-      padding: 12px 28px;
-      border-radius: 50px;
-      font-family: 'Segoe UI', sans-serif;
-      font-size: 16px;
+      justify-content: center;
+      gap: 20px;
       cursor: pointer;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      animation: pulse 2s infinite;
-      transition: opacity 0.5s;
-      white-space: nowrap;
-      user-select: none;
-      -webkit-user-select: none;
+      transition: opacity 0.6s ease;
     }
-
-    #unmute-overlay svg {
-      width: 22px;
-      height: 22px;
-      flex-shrink: 0;
-    }
-
-    #unmute-overlay.hidden {
+    #splash.hide {
       opacity: 0;
       pointer-events: none;
     }
 
-    @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.35); }
-      50%       { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
-    }
-
-    /* Fullscreen button */
-    #fullscreen-btn {
-      position: fixed;
-      top: 18px;
-      right: 18px;
-      z-index: 200;
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: white;
-      padding: 10px 12px;
-      border-radius: 12px;
-      cursor: pointer;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      opacity: 0.8;
-      transition: opacity 0.3s;
-      touch-action: manipulation;
-    }
-    #fullscreen-btn:active { opacity: 1; transform: scale(0.95); }
-
-    /* Loading */
-    #loading {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      z-index: 999;
+    .tap-circle {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: 2.5px solid rgba(255,255,255,0.6);
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
-      gap: 18px;
-      color: #fff;
-      font-family: 'Segoe UI', sans-serif;
-      transition: opacity 0.8s;
+      animation: ripple 1.8s ease-in-out infinite;
     }
-    #loading.fade {
-      opacity: 0;
-      pointer-events: none;
+    .tap-circle svg {
+      width: 38px;
+      height: 38px;
+      fill: white;
     }
-    .spinner {
-      width: 52px;
-      height: 52px;
-      border: 4px solid rgba(255, 255, 255, 0.15);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    @keyframes ripple {
+      0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
+      70%  { box-shadow: 0 0 0 22px rgba(255,255,255,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
     }
 
-    /* Safe area untuk notch/punch-hole Android */
-    @supports (padding: env(safe-area-inset-top)) {
-      #fullscreen-btn {
-        top: calc(18px + env(safe-area-inset-top));
-        right: calc(18px + env(safe-area-inset-right));
-      }
-      #unmute-overlay {
-        bottom: calc(40px + env(safe-area-inset-bottom));
-      }
+    .tap-label {
+      color: #fff;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-align: center;
+      opacity: 0.9;
+    }
+    .tap-sub {
+      color: rgba(255,255,255,0.55);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 13px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
-  <!-- Loading Screen -->
-  <div id="loading">
-    <div class="spinner"></div>
-    <span style="font-size:14px;opacity:0.65;">Memuat video...</span>
-  </div>
+  <!-- VIDEO -->
+  <video
+    id="mainVideo"
+    src="video.mp4"
+    loop
+    muted
+    playsinline
+    webkit-playsinline
+    x5-playsinline
+    x5-video-player-type="h5"
+    x5-video-player-fullscreen="false"
+    preload="auto"
+  ></video>
 
-  <!-- Video Container -->
-  <div id="video-container">
-    <video
-      id="mainVideo"
-      src="video.mp4"
-      autoplay
-      loop
-      muted
-      playsinline
-      webkit-playsinline
-      x5-playsinline
-      x5-video-player-type="h5"
-      x5-video-player-fullscreen="true"
-      preload="auto"
-    ></video>
+  <!-- SPLASH SCREEN - tap to start dengan suara -->
+  <div id="splash" ontouchstart="startVideo()" onclick="startVideo()">
+    <div class="tap-circle">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+      </svg>
+    </div>
+    <div class="tap-label">Ketuk untuk Mulai</div>
+    <div class="tap-sub">Video + Suara akan diputar</div>
   </div>
-
-  <!-- Tap to Unmute -->
-  <div id="unmute-overlay" onclick="unmuteVideo()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-      <line x1="23" y1="9" x2="17" y2="15"/>
-      <line x1="17" y1="9" x2="23" y2="15"/>
-    </svg>
-    Ketuk untuk suara
-  </div>
-
-  <!-- Fullscreen Button -->
-  <button id="fullscreen-btn" onclick="toggleFullscreen()" title="Fullscreen">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <polyline points="15 3 21 3 21 9"/>
-      <polyline points="9 21 3 21 3 15"/>
-      <line x1="21" y1="3" x2="14" y2="10"/>
-      <line x1="3" y1="21" x2="10" y2="14"/>
-    </svg>
-  </button>
 
   <script>
-    const video       = document.getElementById('mainVideo');
-    const loading     = document.getElementById('loading');
-    const unmuteEl    = document.getElementById('unmute-overlay');
+    const video  = document.getElementById('mainVideo');
+    const splash = document.getElementById('splash');
+    let started  = false;
 
-    /* ── Sembunyikan loading ── */
-    function hideLoading() {
-      loading.classList.add('fade');
-      setTimeout(() => loading.remove(), 1100);
-    }
-    video.addEventListener('canplay', () => setTimeout(hideLoading, 200));
-    setTimeout(hideLoading, 3500); // fallback
+    // Preload video di background (muted dulu)
+    video.load();
+    video.play().catch(() => {});
 
-    /* ── Fullscreen helper ── */
-    function requestFS(el) {
-      if (el.requestFullscreen)            el.requestFullscreen({ navigationUI: 'hide' });
+    function startVideo() {
+      if (started) return;
+      started = true;
+
+      // Fullscreen
+      const el = document.documentElement;
+      if (el.requestFullscreen)            el.requestFullscreen({ navigationUI: 'hide' }).catch(() => {});
       else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
       else if (el.mozRequestFullScreen)    el.mozRequestFullScreen();
-      else if (el.msRequestFullscreen)     el.msRequestFullscreen();
-    }
-    function exitFS() {
-      if (document.exitFullscreen)            document.exitFullscreen();
-      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-    }
-    function isFullscreen() {
-      return !!(document.fullscreenElement || document.webkitFullscreenElement);
-    }
-    function toggleFullscreen() {
-      isFullscreen() ? exitFS() : requestFS(document.documentElement);
-    }
 
-    /* ── Unmute ── */
-    function unmuteVideo() {
+      // Unmute & putar dengan suara — HARUS dalam gesture user
       video.muted  = false;
       video.volume = 1;
-      video.play().catch(() => {});
-      unmuteEl.classList.add('hidden');
+      video.currentTime = 0;
+      video.play().then(() => {
+        splash.classList.add('hide');
+        setTimeout(() => splash.remove(), 700);
+      }).catch(() => {
+        // Fallback: tetap muted tapi tetap sembunyikan splash
+        video.muted = true;
+        video.play();
+        splash.classList.add('hide');
+        setTimeout(() => splash.remove(), 700);
+      });
     }
 
-    /* ── Strategi autoplay bertahap ──
-       1. Coba langsung dengan suara
-       2. Jika gagal → muted dulu, tampilkan tombol unmute
-    ── */
-    function startPlayback() {
-      video.muted = false;
-      video.volume = 1;
-      video.play()
-        .then(() => {
-          unmuteEl.classList.add('hidden'); // berhasil langsung bersuara
-        })
-        .catch(() => {
-          // Browser blokir unmuted autoplay → mainkan muted
-          video.muted = true;
-          video.play().catch(() => {});
-          unmuteEl.classList.remove('hidden');
-        });
-    }
-
-    window.addEventListener('load', () => setTimeout(startPlayback, 150));
-
-    /* ── Fullscreen + unmute otomatis saat pertama kali disentuh ── */
-    let firstTouch = false;
-    function onFirstInteraction() {
-      if (firstTouch) return;
-      firstTouch = true;
-      requestFS(document.documentElement);
-      unmuteVideo();
-    }
-    document.addEventListener('click',      onFirstInteraction);
-    document.addEventListener('touchstart', onFirstInteraction, { passive: true });
-
-    /* ── Jaga video tetap putar saat tab kembali aktif ── */
+    // Jaga video tetap jalan
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) video.play().catch(() => {});
+      if (!document.hidden && started) video.play().catch(() => {});
     });
-
-    video.addEventListener('ended', () => video.play().catch(() => {}));
     video.addEventListener('pause', () => {
-      if (!document.hidden) setTimeout(() => video.play().catch(() => {}), 100);
+      if (!document.hidden && started) setTimeout(() => video.play().catch(() => {}), 80);
     });
 
-    /* ── Resize: pastikan container selalu full ── */
-    function fixSize() {
-      document.getElementById('video-container').style.height = window.innerHeight + 'px';
+    // Fix ukuran saat orientasi berubah
+    function fixVideoSize() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      video.style.width  = w + 'px';
+      video.style.height = h + 'px';
     }
-    window.addEventListener('resize', fixSize);
-    window.addEventListener('orientationchange', fixSize);
-    fixSize();
+    window.addEventListener('resize', fixVideoSize);
+    window.addEventListener('orientationchange', () => setTimeout(fixVideoSize, 300));
+    fixVideoSize();
   </script>
 </body>
 </html>
