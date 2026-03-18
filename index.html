@@ -8,89 +8,82 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-fullscreen"/>
   <title>Selamat Hari Raya Idul Fitri</title>
   <style>
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    * { margin:0; padding:0; box-sizing:border-box; }
 
-    html {
+    html, body {
       width: 100%;
       height: 100%;
-    }
-
-    body {
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
       background: #000;
-      touch-action: none;
+      overflow: hidden;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       -webkit-user-select: none;
     }
 
-    /* ═══ VIDEO ═══ */
+    /* ─── VIDEO ─── */
     #mainVideo {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
       object-fit: cover;
-      object-position: center center;
-      display: block;
+      object-position: center;
       z-index: 1;
     }
 
-    /* ═══ SPLASH / TAP TO START ═══ */
+    /* ─── SPLASH FULLSCREEN ─── */
     #splash {
       position: fixed;
       inset: 0;
-      z-index: 999;
-      background: rgba(0,0,0,0.82);
+      z-index: 100;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 20px;
+      gap: 24px;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
       cursor: pointer;
-      transition: opacity 0.6s ease;
+      transition: opacity 0.4s ease;
     }
-    #splash.hide {
+    #splash.gone {
       opacity: 0;
       pointer-events: none;
     }
 
-    .tap-circle {
-      width: 90px;
-      height: 90px;
+    /* Icon speaker besar */
+    .icon-wrap {
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.12);
-      border: 2.5px solid rgba(255,255,255,0.6);
+      background: rgba(255,255,255,0.15);
+      border: 2px solid rgba(255,255,255,0.7);
       display: flex;
       align-items: center;
       justify-content: center;
-      animation: ripple 1.8s ease-in-out infinite;
+      animation: beat 1.6s ease-in-out infinite;
     }
-    .tap-circle svg {
-      width: 38px;
-      height: 38px;
-      fill: white;
+    .icon-wrap svg {
+      width: 46px;
+      height: 46px;
+      fill: #fff;
     }
-    @keyframes ripple {
-      0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
-      70%  { box-shadow: 0 0 0 22px rgba(255,255,255,0); }
-      100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+    @keyframes beat {
+      0%, 100% { transform: scale(1);   box-shadow: 0 0 0 0   rgba(255,255,255,0.5); }
+      50%       { transform: scale(1.06); box-shadow: 0 0 0 18px rgba(255,255,255,0); }
     }
 
-    .tap-label {
+    .txt-main {
       color: #fff;
       font-family: 'Segoe UI', Arial, sans-serif;
-      font-size: 18px;
-      font-weight: 500;
-      letter-spacing: 0.5px;
+      font-size: 20px;
+      font-weight: 600;
       text-align: center;
-      opacity: 0.9;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.6);
     }
-    .tap-sub {
-      color: rgba(255,255,255,0.55);
+    .txt-sub {
+      color: rgba(255,255,255,0.65);
       font-family: 'Segoe UI', Arial, sans-serif;
       font-size: 13px;
       text-align: center;
@@ -99,84 +92,96 @@
 </head>
 <body>
 
-  <!-- VIDEO -->
   <video
     id="mainVideo"
     src="video.mp4"
-    loop
-    muted
-    playsinline
+    loop muted playsinline
     webkit-playsinline
     x5-playsinline
     x5-video-player-type="h5"
-    x5-video-player-fullscreen="false"
     preload="auto"
   ></video>
 
-  <!-- SPLASH SCREEN - tap to start dengan suara -->
-  <div id="splash" ontouchstart="startVideo()" onclick="startVideo()">
-    <div class="tap-circle">
+  <!-- Splash: sentuh di mana saja → suara langsung nyala -->
+  <div id="splash">
+    <div class="icon-wrap">
+      <!-- Speaker / volume icon -->
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73
+                 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11
+                 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
       </svg>
     </div>
-    <div class="tap-label">Ketuk untuk Mulai</div>
-    <div class="tap-sub">Video + Suara akan diputar</div>
+    <div class="txt-main">Sentuh Layar untuk Mulai</div>
+    <div class="txt-sub">Video akan diputar dengan suara</div>
   </div>
 
   <script>
     const video  = document.getElementById('mainVideo');
     const splash = document.getElementById('splash');
-    let started  = false;
+    let ready = false;
 
-    // Preload video di background (muted dulu)
+    // Mulai load & putar muted di background supaya siap
     video.load();
     video.play().catch(() => {});
 
-    function startVideo() {
-      if (started) return;
-      started = true;
-
-      // Fullscreen
-      const el = document.documentElement;
-      if (el.requestFullscreen)            el.requestFullscreen({ navigationUI: 'hide' }).catch(() => {});
-      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-      else if (el.mozRequestFullScreen)    el.mozRequestFullScreen();
-
-      // Unmute & putar dengan suara — HARUS dalam gesture user
-      video.muted  = false;
-      video.volume = 1;
-      video.currentTime = 0;
-      video.play().then(() => {
-        splash.classList.add('hide');
-        setTimeout(() => splash.remove(), 700);
-      }).catch(() => {
-        // Fallback: tetap muted tapi tetap sembunyikan splash
-        video.muted = true;
-        video.play();
-        splash.classList.add('hide');
-        setTimeout(() => splash.remove(), 700);
-      });
+    function fixSize() {
+      video.style.width  = window.innerWidth  + 'px';
+      video.style.height = window.innerHeight + 'px';
     }
+    fixSize();
+    window.addEventListener('resize', fixSize);
+    window.addEventListener('orientationchange', () => setTimeout(fixSize, 250));
+
+    // ─── FUNGSI UTAMA: aktifkan suara saat disentuh ───
+    function activate(e) {
+      if (ready) return;
+      ready = true;
+
+      // Cegah event berganda
+      e.preventDefault();
+      e.stopPropagation();
+
+      // 1. Fullscreen
+      try {
+        const fs = document.documentElement;
+        if (fs.requestFullscreen)            fs.requestFullscreen({ navigationUI: 'hide' });
+        else if (fs.webkitRequestFullscreen) fs.webkitRequestFullscreen();
+        else if (fs.mozRequestFullScreen)    fs.mozRequestFullScreen();
+      } catch (_) {}
+
+      // 2. Buka suara — WAJIB di dalam gesture user agar browser izinkan
+      video.pause();
+      video.muted       = false;
+      video.volume      = 1.0;
+      video.currentTime = 0;
+
+      const p = video.play();
+      if (p && p.then) {
+        p.then(() => {
+          splash.classList.add('gone');
+          setTimeout(() => { if (splash.parentNode) splash.remove(); }, 500);
+        }).catch(() => {
+          // Jika masih diblokir browser, tetap sembunyikan splash
+          video.muted = true;
+          video.play().catch(() => {});
+          splash.classList.add('gone');
+        });
+      } else {
+        splash.classList.add('gone');
+      }
+    }
+
+    splash.addEventListener('touchstart', activate, { passive: false });
+    splash.addEventListener('click',      activate);
 
     // Jaga video tetap jalan
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && started) video.play().catch(() => {});
+      if (!document.hidden && ready) video.play().catch(() => {});
     });
     video.addEventListener('pause', () => {
-      if (!document.hidden && started) setTimeout(() => video.play().catch(() => {}), 80);
+      if (!document.hidden && ready) setTimeout(() => video.play().catch(() => {}), 80);
     });
-
-    // Fix ukuran saat orientasi berubah
-    function fixVideoSize() {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      video.style.width  = w + 'px';
-      video.style.height = h + 'px';
-    }
-    window.addEventListener('resize', fixVideoSize);
-    window.addEventListener('orientationchange', () => setTimeout(fixVideoSize, 300));
-    fixVideoSize();
   </script>
 </body>
 </html>
